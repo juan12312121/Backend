@@ -1,0 +1,46 @@
+require('dotenv').config();
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+const db = require('../config/database');
+
+
+const apiKey = process.env.GEMINI_API_KEY;
+const genAI = new GoogleGenerativeAI(apiKey);
+const model = genAI.getGenerativeModel({
+  model: 'gemini-1.5-flash',
+});
+
+const generationConfig = {
+  temperature: 1,
+  topP: 0.95,
+  topK: 40,
+  maxOutputTokens: 8192,
+  responseMimeType: 'text/plain',
+};
+
+// Controlador para manejar la petición
+async function generateResponse(req, res) {
+  const { inputMessage } = req.body;
+
+  if (!inputMessage) {
+    return res.status(400).json({ error: 'El mensaje de entrada es obligatorio.' });
+  }
+
+  try {
+    const chatSession = model.startChat({
+      generationConfig,
+      history: [],
+    });
+
+    const result = await chatSession.sendMessage(inputMessage);
+    const responseText = result.response.text();
+
+    return res.status(200).json({
+      message: responseText,
+    });
+  } catch (error) {
+    console.error('Error al generar respuesta:', error);
+    return res.status(500).json({ error: 'Hubo un error al generar la respuesta.' });
+  }
+}
+
+module.exports = { generateResponse };
