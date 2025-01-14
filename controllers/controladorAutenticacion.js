@@ -8,27 +8,30 @@ dotenv.config();
 exports.register = async (req, res) => {
   const { nombreCompleto, username, correo, password, rol, numeroLicencia } = req.body;
 
-  // Validación de los campos
+  // Validación de los campos obligatorios
   if (!nombreCompleto || !username || !correo || !password) {
     return res.status(400).json({ message: 'Todos los campos son requeridos' });
   }
 
   // Asignar rol por defecto si no se proporciona
-  const userRole = rol || 1;
+  const userRole = rol || 1; // Si el rol no es proporcionado, asignar rol 1 (usuario normal)
 
-  // Si el rol es 5, el número de licencia debe ser proporcionado
+  // Si el rol es 5 (admin), el número de licencia debe ser proporcionado
   if (userRole === 5 && !numeroLicencia) {
     return res.status(400).json({ message: 'El número de licencia es requerido para usuarios de nivel 5' });
   }
 
   try {
+    // Encriptar la contraseña antes de guardarla en la base de datos
     const hashedPassword = await bcrypt.hash(password, 10);
     
-    // Registrar el usuario en la base de datos
+    // Registrar al usuario en la base de datos
     await userModel.createUser(nombreCompleto, username, correo, hashedPassword, userRole, numeroLicencia);
     
-    // Crear el token para el nuevo usuario
+    // Crear el token JWT para el nuevo usuario
     const token = jwt.sign({ username, rol: userRole }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
+    
+    // Enviar respuesta con el token generado
     res.status(201).json({ message: 'Usuario registrado con éxito', token });
   } catch (err) {
     console.error(err);
