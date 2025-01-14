@@ -1,25 +1,21 @@
 const mysql = require('mysql2');
-const dotenv = require('dotenv');
+const mysql = require('mysql2');
 
-// Cargar variables de entorno
-dotenv.config();
-
-// Crear conexión con MySQL
-const db = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+const connection = mysql.createConnection({
+  host: 'mysql-backend-juabngonzalez4-13d9.g.aivencloud.com',
+  user: 'avnadmin',
+  password: 'AVNS_kFAEVoDNjL-0U3KaH68',
+  database: 'defaultdb',
+  port: 26785, // Asegúrate de usar el puerto correcto si es diferente a 3306
+  connectTimeout: 10000 // Establece un tiempo de espera para la conexión (en milisegundos)
 });
 
-db.connect((err) => {
+connection.connect(err => {
   if (err) {
-    console.error('Error conectando a la base de datos:', err);
+    console.error('Error de conexión:', err.stack);
     return;
   }
-  console.log('Conectado a la base de datos MySQL');
-})
-
-
+  console.log('Conectado a la base de datos');
+});
 
 module.exports = db;
