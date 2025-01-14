@@ -1,6 +1,6 @@
 const db = require('../config/database');
 
-const userModel = {
+
   // Crear un nuevo usuario
 const userModel = {
   // Crear un nuevo usuario
