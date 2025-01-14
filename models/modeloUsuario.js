@@ -2,21 +2,31 @@ const db = require('../config/database');
 
 const userModel = {
   // Crear un nuevo usuario
-  createUser: (nombreCompleto, nombreUsuario, correo, hashedPassword, rol, numeroLicencia) => {
+ createUser: (nombreCompleto, nombreUsuario, correo, hashedPassword, rol, numeroLicencia) => {
     const query = 'INSERT INTO usuarios (nombre_completo, nombre_usuario, correo, contrasena, rol, numero_licencia) VALUES (?, ?, ?, ?, ?, ?)';
     return new Promise((resolve, reject) => {
-      // If role is not 5, we can pass null for numeroLicencia
-      const params = rol === 5 ? [nombreCompleto, nombreUsuario, correo, hashedPassword, rol, numeroLicencia] : [nombreCompleto, nombreUsuario, correo, hashedPassword, rol, null];
-  
-      db.query(query, params, (err, result) => {
-        if (err) {
-          return reject(err);
+        // Verificar el rol
+        let params;
+        if (rol === 5) {
+            // Solo los usuarios de rol 5 necesitan el número de licencia
+            params = [nombreCompleto, nombreUsuario, correo, hashedPassword, rol, numeroLicencia];
+        } else if (rol === 1 || rol === 10) {
+            // Los usuarios de rol 1 y 10 no necesitan número de licencia
+            params = [nombreCompleto, nombreUsuario, correo, hashedPassword, rol, null];
+        } else {
+            // Si el rol no es 5, 1, o 10, también pasamos null como número de licencia
+            params = [nombreCompleto, nombreUsuario, correo, hashedPassword, rol, null];
         }
-        resolve(result);
-      });
-    });
-  },
   
+        db.query(query, params, (err, result) => {
+            if (err) {
+                return reject(err);
+            }
+            resolve(result);
+        });
+    });
+},
+
 
   // Encontrar un usuario por su nombre de usuario
   findUserByUsername: (nombreUsuario) => {
