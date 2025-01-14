@@ -2,7 +2,9 @@ const db = require('../config/database');
 
 const userModel = {
   // Crear un nuevo usuario
- createUser: (nombreCompleto, nombreUsuario, correo, hashedPassword, rol, numeroLicencia) => {
+const userModel = {
+  // Crear un nuevo usuario
+  createUser: (nombreCompleto, nombreUsuario, correo, hashedPassword, rol, numeroLicencia) => {
     const query = 'INSERT INTO usuarios (nombre_completo, nombre_usuario, correo, contrasena, rol, numero_licencia) VALUES (?, ?, ?, ?, ?, ?)';
     return new Promise((resolve, reject) => {
         // Verificar el rol
@@ -26,8 +28,7 @@ const userModel = {
         });
     });
 },
-
-
+  
   // Encontrar un usuario por su nombre de usuario
   findUserByUsername: (nombreUsuario) => {
     const query = 'SELECT * FROM usuarios WHERE nombre_usuario = ?';
