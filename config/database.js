@@ -1,6 +1,6 @@
 const mysql = require('mysql2');
 
-const connection = mysql.createConnection({
+const db = mysql.createConnection({
   host: 'mysql-backend-juabngonzalez4-13d9.g.aivencloud.com',
   user: 'avnadmin',
   password: 'AVNS_kFAEVoDNjL-0U3KaH68',
@@ -9,7 +9,7 @@ const connection = mysql.createConnection({
   connectTimeout: 10000 // Establece un tiempo de espera para la conexión (en milisegundos)
 });
 
-connection.connect(err => {
+db.connect(err => {
   if (err) {
     console.error('Error de conexión:', err.stack);
     return;
@@ -17,4 +17,5 @@ connection.connect(err => {
   console.log('Conectado a la base de datos');
 });
 
+// Exporta la conexión usando 'db'
 module.exports = db;
